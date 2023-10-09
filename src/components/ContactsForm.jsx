@@ -1,19 +1,25 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import { nanoid } from 'nanoid';
 
-export class ContactForm extends Component {
-  state = {
-    name: '',
-    number: '',
+export const ContactsForm = ({ onAddContact }) => {
+  const [name, setName] = useState('');
+  const [number, setNumber] = useState('');
+
+  const onInputChange = event => {
+    switch (event.target.name) {
+      case 'name':
+        setName(event.target.value.trim());
+        break;
+      case 'number':
+        setNumber(event.target.value.trim());
+        break;
+      default:
+        break;
+    }
   };
 
-  onInputChange = event => {
-    this.setState({ [event.target.name]: event.target.value.trim() });
-  };
-
-  onBtnSubmit = event => {
+  const onBtnSubmit = event => {
     event.preventDefault();
-    const { name, number } = this.state;
 
     if (name === '' || number === '') {
       alert('Enter your data');
@@ -21,32 +27,19 @@ export class ContactForm extends Component {
     }
 
     const newContact = { id: nanoid(), name, number };
-    this.props.onAddContact(newContact);
+    onAddContact(newContact);
 
-    this.setState({ name: '', number: '' });
+    setNumber('');
+    setName('');
   };
 
-  render() {
-    const { name, number } = this.state;
-
-    return (
-      <form onSubmit={this.onBtnSubmit}>
-        <label>Name</label>
-        <input
-          type="text"
-          name="name"
-          value={name}
-          onChange={this.onInputChange}
-        />
-        <label>Number</label>
-        <input
-          type="tel"
-          name="number"
-          value={number}
-          onChange={this.onInputChange}
-        />
-        <button type="submit">Add Contact</button>
-      </form>
-    );
-  }
-}
+  return (
+    <form onSubmit={onBtnSubmit}>
+      <label>Name</label>
+      <input type="text" name="name" value={name} onChange={onInputChange} />
+      <label>Number</label>
+      <input type="tel" name="number" value={number} onChange={onInputChange} />
+      <button type="submit">Add Contact</button>
+    </form>
+  );
+};
